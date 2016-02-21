@@ -25,7 +25,9 @@ define([
 
             this.loader = new ProtonLoader();
 
-            this.stage.interactionManager.onMouseDown = function(mouse)
+            this.stage.interactionManager.onMouseDown
+                = this.stage.interactionManager.onTouchStart
+                = function(mouse)
             {
                 this.emit(mouse)
             }.bind(this);
