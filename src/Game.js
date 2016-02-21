@@ -7,8 +7,9 @@ define([
     "proton",
     "jquery",
     "ProtonLoader",
-    "pixi"],
-    function(Class, Proton, $, ProtonLoader, PIXI) {
+    "pixi",
+    "dat"],
+    function(Class, Proton, $, ProtonLoader, PIXI, Dat) {
 
     var Game = Class({
 
@@ -31,50 +32,56 @@ define([
 
             $.getJSON("assets/particles/blast.json", function(json)
             {
-                if (this.emitter)
-                {
-                    this.proton.removeEmitter(this.emitter);
-                }
+                this.particleData = json;
 
-                this.emitter = this.loader.generateEmitter(json);
+                this.setupGui();
 
-                //this.emitter.p.x = 200;
-
-                //this.emitter.p.y = 500;
-
-                //this.emitter.emit();
-
-                this.proton.addEmitter(this.emitter);
+                this.jsonUpdated();
 
             }.bind(this));
 
             //this.tempEmitter();
         },
 
-        tempEmitter: function()
+        jsonUpdated: function()
         {
-            var texture = PIXI.Texture.fromImage('assets/img/cross.png');
+            if (this.emitter)
+            {
+                this.proton.removeEmitter(this.emitter);
+            }
 
-            var emitter = new Proton.Emitter();
+            this.emitter = this.loader.generateEmitter(this.particleData);
 
-            this.proton.addEmitter(emitter);
+            this.proton.addEmitter(this.emitter);
+        },
 
-            emitter.addInitialize(new Proton.ImageTarget(texture));
-             //set Rate
-             emitter.rate = new Proton.Rate(Proton.getSpan(10, 20), Proton.getSpan(0.1, 0.1));
-             //add Initialize
-             emitter.addInitialize(new Proton.Radius(1, 12));
-             emitter.addInitialize(new Proton.Life(2, 4));
-             emitter.addInitialize(new Proton.Velocity(3, Proton.getSpan(0, 360), 'polar'));
-             //add Behaviour
-             emitter.addBehaviour(new Proton.Color('ff0000', 'random'));
-             emitter.addBehaviour(new Proton.Alpha(1, 0));
-             //set emitter position
-             emitter.p.x = 200;
-             emitter.p.y = 200;
-             emitter.emit();
-             //add emitter to the proton
+        buildTree: function(node, folder)
+        {
+            for(var key in node)
+            {
+                if (typeof node[key] === 'object')
+                {
+                    var newFolder = folder.addFolder(key);
 
+                    this.buildTree(node[key], newFolder);
+                }
+                else
+                {
+                    var controller = folder.add(node, key);
+
+                    controller.onChange = function()
+                    {
+                        this.jsonUpdated();
+                    }.bind(this);
+                }
+            }
+        },
+
+        setupGui: function()
+        {
+            var gui = new Dat.GUI();
+
+            this.buildTree(this.particleData, gui);
         },
 
         emit: function(mouse)
@@ -92,7 +99,7 @@ define([
 
             this.emitter.p.y = y;
 
-            this.emitter.emit();
+            this.emitter.emit(this.particleData.emitTime);
 
         },
 

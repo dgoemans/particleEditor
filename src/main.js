@@ -4,7 +4,8 @@ requirejs.config({
         pixi: '../lib/pixi',
         class: '../lib/js.class.min',
         proton: '../lib/proton.min',
-        jquery: '../lib/jquery-2.2.0.min'
+        jquery: '../lib/jquery-2.2.0.min',
+        dat: '../lib/dat.gui.min'
     },
 
     shim: {
@@ -13,6 +14,9 @@ requirejs.config({
         },
         'proton' : {
             exports: 'Proton'
+        },
+        'dat': {
+            exports: 'dat'
         }
 
     }
