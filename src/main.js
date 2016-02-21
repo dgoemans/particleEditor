@@ -3,7 +3,8 @@ requirejs.config({
     paths: {
         pixi: '../lib/pixi',
         class: '../lib/js.class.min',
-        proton: '../lib/proton.min'
+        proton: '../lib/proton.min',
+        jquery: '../lib/jquery-2.2.0.min'
     },
 
     shim: {
@@ -21,7 +22,7 @@ navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mo
 
 require(["Game", "pixi", "proton"], function(Game, PIXI, Proton) {
     var proton = new Proton();
-    var stage = new PIXI.Stage(0xFFFFFF);
+    var stage = new PIXI.Stage(0x333333);
 
     var pixiRenderer = PIXI.autoDetectRenderer(window.innerWidth, window.innerHeight);
     document.body.appendChild(pixiRenderer.view);
@@ -31,7 +32,7 @@ require(["Game", "pixi", "proton"], function(Game, PIXI, Proton) {
     var protonRenderer = new Proton.Renderer('other', proton);
 
     protonRenderer.onParticleCreated = function (particle) {
-        var sprite = new PIXI.Sprite(particle.target)
+        var sprite = new PIXI.Sprite(particle.target);
         sprite.anchor.x = 0.5;
         sprite.anchor.y = 0.5;
 
